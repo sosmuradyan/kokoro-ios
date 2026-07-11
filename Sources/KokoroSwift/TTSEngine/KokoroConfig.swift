@@ -154,7 +154,10 @@ struct KokoroConfig: Decodable {
   ///         and should fail fast if the file is missing or malformed
   nonisolated static func loadConfig() -> KokoroConfig {
     // Locate config.json in the module bundle
-    let fileURL = Bundle.module.url(forResource: "config", withExtension: "json", subdirectory: "Resources")!
+    guard let fileURL = Bundle.module.url(forResource: "config", withExtension: "json")
+      ?? Bundle.module.url(forResource: "config", withExtension: "json", subdirectory: "Resources") else {
+      preconditionFailure("KokoroSwift config.json is missing from the package resource bundle.")
+    }
     
     // Read file contents
     let configJSON = try! String(contentsOf: fileURL, encoding: .utf8)
